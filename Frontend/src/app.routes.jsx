@@ -3,7 +3,7 @@ import Login from './features/auth/pages/Login'
 import Register from './features/auth/pages/Register'
 import Protect from '../src/features/auth/components/Protected'
 import Home from './features/auth/interview/pages/Home'
-import Interview from './features/auth/interview/pages/interview'
+import Interview from './features/auth/interview/pages/Interview'
 import { MainLayout } from './features/auth/pages/MainLayout'
 
 
