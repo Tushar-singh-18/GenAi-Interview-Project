@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const api = axios.create({
-    baseURL:"//localhost:3000",
+    baseURL:"https://genai-interview-project-9gk5.onrender.com",//"//localhost:3000"
     withCredentials: true
 })
 
