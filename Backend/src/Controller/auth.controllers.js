@@ -39,7 +39,13 @@ async function userRegister(req, res) {
         id: user._id, username: user.username
     }, process.env.JWT_SECRET, { expiresIn: "1d" })
 
-    res.cookie("token", token)
+    res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 24 * 60 * 60 * 1000
+})
+    //res.cookie("token", token)
 
     res.status(201).json({
         message: "New user has been created",
@@ -76,7 +82,13 @@ async function userLogin(req, res) {
         id: user._id, username: user.username
     }, process.env.JWT_SECRET, { expiresIn: "1d" })
 
-    res.cookie("token", token)
+    res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 24 * 60 * 60 * 1000
+})
+    // res.cookie("token", token)
 
     res.status(200).json({
         message: "User successfully logged in",
