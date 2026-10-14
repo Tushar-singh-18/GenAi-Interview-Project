@@ -6,7 +6,7 @@ const Protect = ({ children }) => {
     const { loading, user } = useAuth()
 
     if (loading) {
-        return (<main><h1>Loading...</h1></main>)
+        return (<main><h1>Loading may take some time since I'am using free plan of Vercel</h1></main>)
     }
 
     if (!user) {
