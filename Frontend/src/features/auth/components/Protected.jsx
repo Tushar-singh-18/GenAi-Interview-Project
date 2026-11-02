@@ -1,12 +1,19 @@
 import { useAuth } from "../hooks/useAuth";
 import { Navigate } from "react-router";
-import React from 'react'
 
 const Protect = ({ children }) => {
     const { loading, user } = useAuth()
 
     if (loading) {
-        return (<main><h1>Loading may take some time since I'am using free plan of Vercel</h1></main>)
+        return (
+            <main className="flex min-h-screen items-center justify-center bg-[#f3efe7] px-6">
+                <div className="flex flex-col items-center gap-4 text-center">
+                    <span className="h-10 w-10 animate-spin rounded-full border-4 border-[#dce2d7] border-t-[#49624d]" />
+                    <h1 className="text-lg font-medium text-[#343a33]">Getting your workspace ready...</h1>
+                    <p className="text-sm text-[#77776f]">Thanks for your patience.</p>
+                </div>
+            </main>
+        )
     }
 
     if (!user) {

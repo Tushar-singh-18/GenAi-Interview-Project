@@ -3,9 +3,9 @@ import { Navbar } from './Navbar';
 
 export const MainLayout = ({ children }) => {
   return (
-    <div className="flex min-h-screen flex-col bg-[#0a0a0f] text-slate-100">
+    <div className="flex min-h-screen flex-col bg-[#f3efe7] text-[#292d29]">
       <Navbar />
-      <main className="flex-1 p-6">
+      <main className="flex-1">
         {children}
       </main>
     </div>

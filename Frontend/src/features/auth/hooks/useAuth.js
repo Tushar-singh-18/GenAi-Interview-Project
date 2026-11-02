@@ -9,16 +9,11 @@ export const useAuth = () => {
     const { user, setUser, loading, setLoading } = context
 
     const handlelogin = async ({ email, password }) => {
-            
         setLoading(true)
         try {
             const data = await login({ email, password })
             setUser(data.user)
-        }
-        catch (error) {
-
-        }
-        finally {
+        } finally {
             setLoading(false)
         }
     }
@@ -29,8 +24,6 @@ export const useAuth = () => {
         try {
             const data = await register({ username, email, password })
             setUser(data.user)
-        } catch (error) {
-
         } finally {
             setLoading(false)
         }
@@ -39,11 +32,8 @@ export const useAuth = () => {
     const handlelogout = async () => {
         setLoading(true)
         try {
-            const data = await logout()
+            await logout()
             setUser(null)
-
-        } catch (error) {
-
         } finally {
             setLoading(false)
         }
@@ -54,9 +44,11 @@ export const useAuth = () => {
             try {
                 const data = await getme()
                 setUser(data.user)
-
             } catch (error) {
-
+                setUser(null)
+                if (error.response?.status !== 401) {
+                    console.error("Unable to restore the current session.", error)
+                }
             } finally {
                 setLoading(false)
             }
