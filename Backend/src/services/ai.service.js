@@ -3,9 +3,10 @@ const { z } = require("zod")
 const { default: zodToJsonSchema } = require('zod-to-json-schema')
 
 
-const ai = new GoogleGenAI({
-    apiKey: process.env.GOOGLE_GENAI_AI_KEY,
-})
+const apiKey = process.env.GOOGLE_GENAI_AI_KEY
+    || process.env.GOOGLE_GENAI_API_KEY
+    || process.env.GOOGLE_API_KEY
+    || process.env.GEMINI_API_KEY
 
 const interviewReportSchema = z.object({
     matchScore: z.number().describe("Overall candidate match score 0-100"),
@@ -37,6 +38,13 @@ const interviewReportSchema = z.object({
 
 
 async function generateInterviewReport({ resume, selfDescription, jobDescription }) {
+    if (!apiKey) {
+        const error = new Error("No Gemini API key is configured.")
+        error.code = "AI_API_KEY_MISSING"
+        throw error
+    }
+
+    const ai = new GoogleGenAI({ apiKey })
 
     const prompt = `Create a practical interview preparation report using the candidate and role details below.
 Return only the requested structured report. Do not repeat or rewrite the job description.

@@ -35,9 +35,51 @@ async function generateInterviewReportController(req, res) {
             jobDescription
         })
     } catch (error) {
-        console.error("Interview report AI generation failed:", error)
+        const upstreamStatus = error.status || error.response?.status
+        console.error("Interview report AI generation failed:", {
+            status: upstreamStatus,
+            code: error.code,
+            message: error.message
+        })
+
+        if (error.code === "AI_API_KEY_MISSING") {
+            return res.status(503).json({
+                message: "Interview generation is not configured. Add a Gemini API key to the backend deployment."
+            })
+        }
+
+        if (upstreamStatus === 401 || upstreamStatus === 403) {
+            return res.status(503).json({
+                message: "The Gemini API key is invalid or does not have access. Check the backend deployment's Gemini credentials."
+            })
+        }
+
+        if (upstreamStatus === 429) {
+            return res.status(503).json({
+                message: "Gemini's usage quota is currently exhausted. Check the API project's quota or billing, then try again."
+            })
+        }
+
+        if (upstreamStatus === 400) {
+            return res.status(502).json({
+                message: "Gemini rejected the generation request. Check the backend logs for the provider's error details."
+            })
+        }
+
+        if (upstreamStatus === 404) {
+            return res.status(503).json({
+                message: "The configured Gemini model is unavailable to this API project. Check the model name and project access."
+            })
+        }
+
+        if (upstreamStatus >= 500) {
+            return res.status(503).json({
+                message: "Gemini is temporarily unavailable. Please try again shortly."
+            })
+        }
+
         return res.status(502).json({
-            message: "We couldn't generate your interview plan right now. Please try again in a moment."
+            message: "Interview generation failed before Gemini returned a report. Check the backend logs for the error details."
         })
     }
 
