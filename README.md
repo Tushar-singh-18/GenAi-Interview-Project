@@ -4,7 +4,13 @@ Turn a job description and your experience into a practical interview prep plan:
 
 ## Watch the demo
 
-[▶ Watch the project walkthrough](ADD_YOUR_VIDEO_LINK_HERE)
+Watch the project walkthrough -
+
+
+
+https://github.com/user-attachments/assets/1c438490-2755-4e90-9a8b-5d3bbc26b203
+
+
 
 Replace the link above with your recorded video.
 
