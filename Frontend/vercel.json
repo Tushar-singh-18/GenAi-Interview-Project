@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/interview",
+      "destination": "https://genai-interview-project-9gk5.onrender.com/api/interview/"
+    },
+    {
+      "source": "/api/interview/",
+      "destination": "https://genai-interview-project-9gk5.onrender.com/api/interview/"
+    },
+    {
       "source": "/api/:path*",
       "destination": "https://genai-interview-project-9gk5.onrender.com/api/:path*"
     }
