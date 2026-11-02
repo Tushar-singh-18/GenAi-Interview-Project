@@ -65,7 +65,7 @@ ${jobDescription}`
         throw new Error("The AI service returned an empty interview report.")
     }
 
-    return JSON.parse(response.text);
+    return interviewReportSchema.parse(JSON.parse(response.text))
 
 }
 

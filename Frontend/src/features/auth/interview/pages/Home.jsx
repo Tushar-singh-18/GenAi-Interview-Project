@@ -38,7 +38,10 @@ const Home = () => {
       const data = await generateReport({ jobDescription, selfDescription, resumeFile })
       navigate(`/interview/${data._id}`)
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || error.message || "Unable to generate your interview plan. Please try again.")
+      const responseMessage = typeof error.response?.data === "string"
+        ? ""
+        : error.response?.data?.message
+      setErrorMessage(responseMessage || "Unable to generate your interview plan. Please try again.")
     } finally {
       setIsGenerating(false)
     }

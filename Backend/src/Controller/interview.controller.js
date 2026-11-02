@@ -27,19 +27,35 @@ async function generateInterviewReportController(req, res) {
         }
     }
 
-    const interviewReportidByAi = await generateInterviewReport({
-        resume: resumeContent,
-        selfDescription,
-        jobDescription
-    })
+    let reportContent
+    try {
+        reportContent = await generateInterviewReport({
+            resume: resumeContent,
+            selfDescription,
+            jobDescription
+        })
+    } catch (error) {
+        console.error("Interview report AI generation failed:", error)
+        return res.status(502).json({
+            message: "We couldn't generate your interview plan right now. Please try again in a moment."
+        })
+    }
 
-    const interviewReport = await interviewReportModel.create({
-        user: req.user.id,
-        resume: resumeContent,
-        selfDescription,
-        jobDescription,
-        ...interviewReportidByAi
-    })
+    let interviewReport
+    try {
+        interviewReport = await interviewReportModel.create({
+            user: req.user.id,
+            resume: resumeContent,
+            selfDescription,
+            jobDescription,
+            ...reportContent
+        })
+    } catch (error) {
+        console.error("Saving the generated interview report failed:", error)
+        return res.status(500).json({
+            message: "Your interview plan was generated but couldn't be saved. Please try again."
+        })
+    }
 
     res.status(201).json({
         message: "Interview report generated successfully.",
