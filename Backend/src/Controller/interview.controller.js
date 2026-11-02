@@ -4,8 +4,28 @@ const interviewReportModel = require('../Model/interviewReport.model')
 
 async function generateInterviewReportController(req, res) {
 
-    const resumeContent = (await (new pdfParse.PDFParse(new Uint8Array(req.file.buffer))).getText()).text
     const { selfDescription, jobDescription } = req.body
+
+    if (!jobDescription?.trim()) {
+        return res.status(400).json({ message: "Please provide a job description." })
+    }
+
+    if (!req.file && !selfDescription?.trim()) {
+        return res.status(400).json({ message: "Upload a PDF resume or provide a self-description." })
+    }
+
+    if (req.file && (!req.file.originalname.toLowerCase().endsWith(".pdf") || req.file.mimetype !== "application/pdf")) {
+        return res.status(400).json({ message: "Only PDF resumes are supported." })
+    }
+
+    let resumeContent = ""
+    if (req.file) {
+        try {
+            resumeContent = (await (new pdfParse.PDFParse(new Uint8Array(req.file.buffer))).getText()).text
+        } catch {
+            return res.status(400).json({ message: "Unable to read the uploaded PDF. Please upload a valid PDF resume." })
+        }
+    }
 
     const interviewReportidByAi = await generateInterviewReport({
         resume: resumeContent,

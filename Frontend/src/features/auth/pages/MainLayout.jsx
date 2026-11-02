@@ -1,13 +1,11 @@
-import React from 'react';
-import { Outlet } from 'react-router';
 import { Navbar } from './Navbar';
 
 
-export const MainLayout = ({children}) => {
+export const MainLayout = ({ children }) => {
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <div className="flex min-h-screen flex-col bg-[#0a0a0f] text-slate-100">
       <Navbar />
-      <main className="p-6">
+      <main className="flex-1 p-6">
         {children}
       </main>
     </div>

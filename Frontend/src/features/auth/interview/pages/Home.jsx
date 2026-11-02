@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router'
 import { useInterview } from '../../hooks/useInterview'
 
@@ -8,14 +8,36 @@ const Home = () => {
   const [jobDescription, setJobDescription] = useState("")
   const [selfDescription, setSelfDescription] = useState("")
   const [resumeFileName, setResumeFileName] = useState("")
+  const [errorMessage, setErrorMessage] = useState("")
   const resumeInputRef = useRef()
 
   const navigate = useNavigate()
 
   const handleGenerateReport = async () => {
-    const resumeFile = resumeInputRef.current.files[0]
-    const data = await generateReport({ jobDescription, selfDescription, resumeFile })
-    navigate(`/interview/${data._id}`)
+    const resumeFile = resumeInputRef.current?.files?.[0]
+
+    if (!jobDescription.trim()) {
+      setErrorMessage("Please enter the target job description.")
+      return
+    }
+
+    if (!resumeFile && !selfDescription.trim()) {
+      setErrorMessage("Upload a PDF resume or enter a self-description.")
+      return
+    }
+
+    if (resumeFile && (!resumeFile.name.toLowerCase().endsWith(".pdf") || resumeFile.size > 3 * 1024 * 1024)) {
+      setErrorMessage("Please upload a PDF resume no larger than 3 MB.")
+      return
+    }
+
+    setErrorMessage("")
+    try {
+      const data = await generateReport({ jobDescription, selfDescription, resumeFile })
+      navigate(`/interview/${data._id}`)
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || error.message || "Unable to generate your interview plan. Please try again.")
+    }
   }
 
   if (loading) {
@@ -81,17 +103,18 @@ const Home = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16" /><line x1="12" y1="12" x2="12" y2="21" /><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" /></svg>
                 </span>
                 <p className='text-sm font-medium text-slate-100'>{resumeFileName || "Click to upload or drag & drop"}</p>
-                <p className='text-xs text-slate-500'>PDF or DOCX (Max 5MB)</p>
+                <p className='text-xs text-slate-500'>PDF only (Max 3 MB)</p>
                 <input
                   ref={resumeInputRef}
                   hidden
                   type='file'
                   id='resume'
                   name='resume'
-                  accept='.pdf,.docx'
+                  accept='.pdf,application/pdf'
                   onChange={(e) => {
                     const file = e.target.files[0]
-                    if (file) setResumeFileName(file.name)
+                    setResumeFileName(file?.name || "")
+                    setErrorMessage("")
                   }}
                 />
               </label>
@@ -136,6 +159,11 @@ const Home = () => {
             Generate My Interview Strategy
           </button>
         </div>
+        {errorMessage && (
+          <p role='alert' className='border-t border-red-500/20 bg-red-500/10 px-8 py-3 text-sm text-red-300'>
+            {errorMessage}
+          </p>
+        )}
       </div>
 
       {/* Recent Reports List */}
